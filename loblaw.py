@@ -26,6 +26,7 @@ def get_schedule(punchin_id: int):
     punchin_id = int(punchin_id)
     if not 0 < punchin_id < (10**7-1):
         raise ValueError("Value is out of range")
+    punchin_id = str(punchin_id)
 
     resp = requests.get(f'https://stas.loblaw.ca/lcl-employeeschedule-services/api/rest/v1/services/en/employeeschedules/{punchin_id}')
     return resp.json()
