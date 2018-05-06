@@ -14,10 +14,11 @@ conflicts=("${pkgname%-git}")
 replaces=()
 backup=()
 options=()
-source=('git+https://github.com/parrottq/loblaw-scheduler' 'loblaw-scheduler.service')
+source=('git+https://github.com/parrottq/loblaw-scheduler' 'loblaw-scheduler.service' 'sysusers.conf')
 noextract=()
 md5sums=('SKIP'
-         '821fe91817ac15fdc4f33d993b66f1d2')
+         '3a8ea2448edf445442b79d4ee4fd264b'
+         '803813bdd85e655ccdb4078296d7f0ec')
 
 
 pkgver() {
@@ -34,5 +35,6 @@ build() {
 package() {
 	cd "$srcdir/${pkgname%-git}"
 	install -Dm644 "$srcdir/loblaw-scheduler.service" "$pkgdir/usr/lib/systemd/system/loblaw-scheduler.service"
+	install -Dm644 "$srcdir/sysusers.conf" "$pkgdir/usr/lib/sysusers.d/loblaw-scheduler.conf"
 	python setup.py install --root="$pkgdir/" --optimize=1 --skip-build
 }
