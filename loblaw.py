@@ -62,11 +62,11 @@ class Shift:
             badge
         )
 
-    def to_str(self):
-        return ":".join([str(self.badge), self.store, self.position, str(self.start.timestamp()), str(self.end.timestamp())])
-
     def uid(self):
-        return sha256(self.to_str().encode()).hexdigest()
+        return sha256(str(self).encode()).hexdigest()
+
+    def __str__(self):
+        return ":".join([str(self.badge), self.store, self.position, str(self.start.timestamp()), str(self.end.timestamp())])
 
     def __repr__(self):
         return '{s.__class__.__name__}(start={s.start!r}, end={s.end!r}, ' \
