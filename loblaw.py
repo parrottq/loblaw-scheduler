@@ -1,18 +1,13 @@
 import datetime
-import requests
-import icalendar
-import uuid
 from hashlib import sha256
 from os import environ
+import uuid
+
 from flask import Flask, Response
+import icalendar
+import requests
+from werkzeug.exceptions import NotFound
 
-"""
-Dependencies
--icalendar
--requests
--flask
-
-"""
 
 app = Flask(__name__)
 
@@ -26,9 +21,10 @@ def get_schedule(punchin_id: int):
     punchin_id = int(punchin_id)
     if not 0 < punchin_id < (10**7-1):
         raise ValueError("Value is out of range")
-    punchin_id = str(punchin_id)
 
     resp = requests.get(f'https://stas.loblaw.ca/lcl-employeeschedule-services/api/rest/v1/services/en/employeeschedules/{punchin_id}')
+    if not resp.content:
+        raise NotFound('That user does not appear to exist')
     return resp.json()
 
 
@@ -62,11 +58,11 @@ class Shift:
             badge
         )
 
-    def to_str(self):
-        return ":".join([str(self.badge), self.store, self.position, str(self.start.timestamp()), str(self.end.timestamp())])
-
     def uid(self):
-        return sha256(self.to_str().encode()).hexdigest()
+        return sha256(str(self).encode()).hexdigest()
+
+    def __str__(self):
+        return ":".join([str(self.badge), self.store, self.position, str(self.start.timestamp()), str(self.end.timestamp())])
 
     def __repr__(self):
         return '{s.__class__.__name__}(start={s.start!r}, end={s.end!r}, ' \
